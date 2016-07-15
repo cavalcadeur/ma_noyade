@@ -203,6 +203,6 @@ function dead(n){
                 if (e.dead == 1) gagnant = victoire[i];
             }
         );
-        alert("Fin du jeu mes amis ! C'est le " + gagnant + " qui a gagné !!!!!!!!!!!!!!");
+        alert("Fin du jeu mes amis ! C'est le " + gagnant + " qui a gagné !!!!!!!!!!!!!");
     }
 }
