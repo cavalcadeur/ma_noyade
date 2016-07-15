@@ -1,0 +1,272 @@
+var W,H;
+var ctx,canvas;
+var Widget;
+var keys = [];
+var pas = 10;
+var perso = {"x":500,"y":500,"vx":0,"vy":pas,"r":0};
+var imgFond = new Image();
+imgFond.src = "images/fond3.png";
+var imgCorps = new Image();
+imgCorps.src = "images/corps.png";
+var corpsX = 100;
+var corpsY = 94;
+var imgTete = new Image();
+imgTete.src = "images/tete.png";
+var teteX = 80;
+var teteY = 76;
+var imgBras = new Image();
+imgBras.src = "images/bras.png";
+var brasX = 90;
+var brasY = 64;
+var imgJambe = new Image();
+imgJambe.src = "images/jambe.png";
+var jambeX = 60;
+var jambeY = 64;
+var heros = {};
+
+// programme
+
+function rnd(max){
+    return Math.floor(Math.floor(Math.random()*max));
+}
+
+function resize(){
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.setAttribute("width",W);
+    canvas.setAttribute("height",H);
+}
+
+function droite(){
+    heros.objCorps = 30;
+    heros.objBrasG = 55;
+    heros.objBrasD = 5;
+    heros.x += 2;
+    heros.scale = 1;
+    heros.anim = "move";
+}
+
+function gauche(){
+    heros.objCorps = -30;
+    heros.objBrasG = -5;
+    heros.objBrasD = -55;
+    heros.x -= 2;
+    heros.scale = 1;
+    heros.anim = "move";
+}
+
+function haut(){
+    heros.y -= 2;
+    heros.scale = 1;
+    heros.anim = "move";
+}
+
+function bas(){
+    heros.y += 2;
+    heros.scale = 1;
+    heros.anim = "move";
+}
+
+function esquive(){
+    heros.anim = "dodge";
+    heros.dodging = 1;
+}
+
+function start(){
+    canvas = document.querySelector("#canvas");
+    ctx = canvas.getContext("2d");
+    W = canvas.width;
+    H = canvas.height;
+    resize();
+    heros = {"vb":-0.1,"vbx":0.05,"lb":30,"ab":0,"g1":1,"gn":7,"scale":1,"anim":"breath","corpsy":0,"corpsx":0,"dodging":0,"objCorps":30,"objBrasG":55,"objBrasD":5};
+    heros.x = W / 2;
+    heros.y = H - corpsY / 2 - jambeY;
+    heros.tx = -5;
+    heros.ty = 10;
+    heros.b1x = -15;
+    heros.b1y = 20;
+    heros.b2x = -10;
+    heros.b2y = 70;
+    heros.b3x = 60;
+    heros.b3y = 20;
+    heros.b4x = 50;
+    heros.b4y = 70;
+    heros.j1x = 10;
+    heros.j1y = -10;
+    heros.j2x = 100;
+    heros.j2y = -10;
+    //    Widget = require("wdg");
+    document.addEventListener(
+        "keydown",
+        function (event){
+            event.preventDefault();
+            event.stopPropagation();
+            keys[event.keyCode] = 1;
+        }
+    );
+    document.addEventListener(
+        "keyup",
+        function (event){
+            event.preventDefault();
+            event.stopPropagation();
+            keys[event.keyCode] = 0;
+        }
+    );
+    animation();
+}
+
+function animation(){
+    var f = function(t) {
+        paint(t);
+        window.requestAnimationFrame(f);
+    };
+    window.requestAnimationFrame(f);
+}
+
+function paint(t){
+    if (1 == keys[39] && heros.dodging == 0) droite();
+    if (1 == keys[37] && heros.dodging == 0) gauche();
+    if (1 == keys[38] && heros.dodging == 0) haut();
+    if (1 == keys[40] && heros.dodging == 0) bas();
+    if (1 == keys[32] && heros.dodging == 0) esquive();
+    if (0 == keys[32] && heros.dodging == 10) heros.dodging = 0;
+    draw();
+    if (heros.anim == "breath") breath();
+    else if (heros.anim == "move") move();
+    else if (heros.anim == "dodge") dodge();
+}
+
+function move(){
+    if (heros.j1y < heros.j2y){
+        heros.y += heros.g1;
+        heros.j2y -= heros.g1;
+    }
+    else if (heros.j2y < heros.j1y){
+        heros.y -= heros.g1;
+        heros.j1y += heros.g1;
+    }
+    else{
+        if (heros.g1 == 1)heros.j1y += heros.g1;
+        else heros.j2y -= heros.g1;
+        heros.y -= 1;
+    }
+    if (heros.gn == 13) {heros.g1 = heros.g1 * -1; heros.gn = 0;}
+    heros.gn += 1;
+    heros.anim = "breath";
+}
+
+function dodge(){
+    if (heros.dodging == 1){
+        heros.b1x += heros.objBrasG / 3;
+        heros.b3x += heros.objBrasD / 3;
+        heros.b2x += heros.objBrasG / 3;
+        heros.b4x += heros.objBrasD / 3;
+
+        heros.tx += heros.objCorps / 3;
+
+        heros.corpsx += heros.objCorps / 3;
+    }
+
+    if (heros.corpsx == heros.objCorps){
+        if (heros.dodging == 7){
+            heros.tx = 0;
+            heros.corpsx = 0;
+            heros.b1x -= heros.objBrasG;
+            heros.b3x -= heros.objBrasD;
+            heros.b2x -= heros.objBrasG;
+            heros.b4x -= heros.objBrasD;
+            heros.dodging = 10;
+            heros.anim = "breath";
+        }
+        else heros.dodging += 1;
+    }
+}
+
+function breath(){
+    heros.b1y += heros.vb * 2;
+    heros.b3y += heros.vb * 2;
+    heros.b2y += heros.vb * 2;
+    heros.b4y += heros.vb * 2;
+    heros.b1x -= heros.vbx;
+    heros.b3x += heros.vbx;
+    heros.b2x -= heros.vbx;
+    heros.b4x += heros.vbx;
+
+    heros.ty += heros.vb;
+
+    heros.corpsy += heros.vb;
+
+    heros.ab +=1;
+    if (heros.lb == heros.ab){
+        if (heros.vb == -0.1){
+            heros.vb = 0;
+            heros.vbx = 0;
+            heros.lb = 20;
+        }
+        else if (heros.vb == 0 && heros.lb == 20){
+            heros.vb = 0.3;
+            heros.vbx = -0.15;
+            heros.lb = 10;
+        }
+        else if (heros.vb == 0.3) {
+            heros.vb = 0;
+            heros.vbx = 0;
+            heros.lb = 30;
+        }
+        else {
+            heros.vb = -0.1;
+            heros.vbx = 0.05;
+            heros.lb = 30;
+        }
+        heros.ab = 0;
+    }
+}
+
+function draw() {
+    ctx.drawImage(imgFond,0,0,W,H);
+
+    ctx.drawImage(imgBras,heros.x - brasX + heros.b1x,heros.y - corpsY / 2 + heros.b1y - brasY/2);
+    ctx.drawImage(imgBras,heros.x - brasX + heros.b2x,heros.y - corpsY / 2 + heros.b2y - brasY/2);
+
+    ctx.save();
+    ctx.translate(heros.x + brasX/2 + heros.b3x,heros.y - corpsY/2 + heros.b3y  - brasY/2);
+    ctx.scale(-1,1);
+    ctx.drawImage(imgBras,0,0);
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(heros.x + brasX/2 + heros.b4x,heros.y - corpsY/2 + heros.b4y  - brasY/2);
+    ctx.scale(-1,1);
+    ctx.drawImage(imgBras,0,0);
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(heros.x - jambeX/2 + heros.j1x,heros.y + corpsY / 2 + heros.j1y);
+    ctx.scale(1,1);
+    ctx.drawImage(imgJambe,-jambeX/2,0);
+    ctx.restore();
+
+    //    ctx.drawImage(imgJambe,heros.x - jambeX + heros.j1x,heros.y + corpsY / 2 + heros.j1y);
+
+    ctx.save();
+    ctx.translate(heros.x - jambeX + heros.j2x,heros.y + corpsY / 2 + heros.j2y);
+    ctx.scale(-1,1);
+    ctx.drawImage(imgJambe,0,0);
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(heros.x + heros.corpsx,heros.y + heros.corpsy);
+    ctx.scale(heros.scale,1);
+    ctx.drawImage(imgCorps,-corpsY/2,-corpsY/2);
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(heros.x + heros.tx,heros.y - corpsY / 2 + heros.ty - teteY);
+    ctx.scale(heros.scale,1);
+    ctx.drawImage(imgTete,-teteX/2,0);
+    ctx.restore();
+
+    //   ctx.drawImage(imgCorps,heros.x - corpsX / 2,heros.y - corpsY / 2);
+
+    //    ctx.drawImage(imgTete,heros.x - teteX / 2 + heros.tx,heros.y - corpsY / 2 + heros.ty - teteY);
+}

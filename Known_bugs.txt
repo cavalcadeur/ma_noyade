@@ -1,0 +1,10 @@
++ Traverser une plate-formes durant un saut permet de faire des super sauts.[FIXED]
++ Les barres verticales rammènent au sommet quand on fonce dessus.          [FIXED]
++ La distance de la metampsychose n'est qu'en x.                            [FIXED]
++ On peut metampsychoser des personnages hors de l'écran.                   [FIXED]
++ Les bombes meurent toutes en même temps                                   [FIXED]
++ La métampsy dans le vide stop le jeu                                      [FIXED]
++ Une boule écrasant une boule tue le jeu.                                  [FIXED]
++ Seul le 1er monstre est autorisé à ouvrir les portes.                     [FIXED]
++ Le jeu ralentis comme un petit fou dans le niveau 2-2                     [FIXED]
+- La boule de neige traverse les plates-formes des fois... 
