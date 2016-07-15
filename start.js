@@ -200,7 +200,7 @@ function dead(n){
     if (deaths == 3) {
         persos.forEach(
             function(e,i){
-                if (e.dead == 1) gagnant = victoire[i];
+                if (e.dead == 0) gagnant = victoire[i];
             }
         );
         alert("Fin du jeu mes amis ! C'est le " + gagnant + " qui a gagné !!!!!!!!!!!!!");
