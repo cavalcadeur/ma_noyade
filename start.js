@@ -18,7 +18,7 @@ var point = [0,0,0,0,0];
 var alerting = 0;
 var bouncing = 10;
 var mode = "classique";
-var modes = ["classique","rebond","tempetes","poursuite","meli-melo","aveugle"];
+var modes = ["classique","rebond","tempetes","poursuite","meli-melo","aveugle","apesanteur"];
 var timeoutID;
 var multiplier = 1;
 var proba = 7;
@@ -91,6 +91,11 @@ function initMode(){
         multiplier = 1;
         proba = 7;
     }
+    else if (mode == "apesanteur"){
+        bouncing = 40;
+        multiplier = 1;
+        proba = 7;
+    }
     else if (mode == "meli-melo"){
         bouncing = 100;
         multiplier = 3;
@@ -149,14 +154,22 @@ function paint(t){
                     if (e.air < 0) dead(i);
                     if (e.j == 0){
                         if (keys[controls[i]] == 1) {
-                            e.vy = -20;
+                            if (mode == "apesanteur"){
+                                e.vx = Math.cos(e.r-Math.PI/2) * 20;
+                                e.vy = Math.sin(e.r-Math.PI/2) * 20;
+                            }
+                            else e.vy = -20;
                             e.j = 1;
                         }
                     }
                     else {
                         if (keys[controls[i]] == 0) e.j = 0;
                     }
-                    if (e.vy < 10) e.vy += 1;
+                    if (mode == "apesanteur"){
+                        if (e.vy > 0) e.vy -= 1;
+                        else if (e.vy < 0) e.vy += 1;
+                    }
+                    else if (e.vy < 10) e.vy += 1;
                     if (e.vx > courants[Math.round(e.y/H*3)]*2) e.vx -= 1;
                     else if (e.vx < courants[Math.round(e.y/H*3)]*2) e.vx += 1;
                     e.r += e.vx/125;
