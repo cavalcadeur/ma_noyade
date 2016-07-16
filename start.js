@@ -64,7 +64,7 @@ function start(){
     H = canvas.height;
     resize();
     reInit();
-    for (var i = 0;i < 80;i ++){
+    for (var i = 0;i < 50;i ++){
         bulles.push({"x":rnd(W),"y":rnd(H),"vx":0,"s":rnd(8)+4,"d":rndSpecial(),"n":0,"vy":0});
     }
     //    Widget = require("wdg");
@@ -153,7 +153,8 @@ function paint(t){
                                     if (e.dead == 0) gagnant = victoire[i];
                                 }
                             );
-                            alert("Fin du jeu mes amis ! C'est le " + gagnant + " qui a gagné !!!!!!!!!!!!!");
+                            if (gagnant == undefined) alert ("Fin du jeu mes amis ! C'est une belle égalité.");
+                            else alert("Fin du jeu mes amis ! C'est le " + gagnant + " qui a gagné !!!!!!!!!!!!!");
                         }
                         e.fade = -10;
                     }
