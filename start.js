@@ -18,7 +18,7 @@ var point = [0,0,0,0,0];
 var alerting = 0;
 var bouncing = 10;
 var mode = "classique";
-var modes = ["classique","rebond","tempetes","poursuite","meli-melo"];
+var modes = ["classique","rebond","tempetes","poursuite","meli-melo","aveugle"];
 var timeoutID;
 var multiplier = 1;
 var proba = 7;
@@ -82,6 +82,11 @@ function initMode(){
         proba = 14;
     }
     else if (mode == "poursuite"){
+        bouncing = 10;
+        multiplier = 1;
+        proba = 7;
+    }
+    else if (mode == "aveugle"){
         bouncing = 10;
         multiplier = 1;
         proba = 7;
@@ -267,22 +272,24 @@ function drawFond(){
     }
     ctx.strokeStyle = "rgb(200,200,250)";
     ctx.fillStyle = "rgb(50,50,100)";
-    ctx.globalAlpha = 0.1;
-    bulles.forEach(
-        function(e){
-            ctx.beginPath();
-            ctx.arc(e.x,e.y+e.vy,e.s,-Math.PI,Math.PI);
-            ctx.stroke();
-            ctx.fill();
-            e.x += courants[Math.round(e.y/H*3)]/5;
-            e.vy += e.n/5;
-            e.n += e.d/20;
-            if (Math.abs(e.n) > 2) e.d = e.d * -1;
-            if (e.x < -20) e.x = W + 15;
-            else if (e.x > W + 20) e.x = -15;
-        }
-    );
-    ctx.globalAlpha = 1;
+    if (mode != "aveugle" && mode != "meli-melo"){
+        ctx.globalAlpha = 0.1;
+        bulles.forEach(
+            function(e){
+                ctx.beginPath();
+                ctx.arc(e.x,e.y+e.vy,e.s,-Math.PI,Math.PI);
+                ctx.stroke();
+                ctx.fill();
+                e.x += courants[Math.round(e.y/H*3)]/5;
+                e.vy += e.n/5;
+                e.n += e.d/20;
+                if (Math.abs(e.n) > 2) e.d = e.d * -1;
+                if (e.x < -20) e.x = W + 15;
+                else if (e.x > W + 20) e.x = -15;
+            }
+        );
+        ctx.globalAlpha = 1;
+    }
 }
 
 function dead(n){
