@@ -14,11 +14,11 @@ var courants = [0,0,0,0];
 var bulles = [];
 var t2 = 0;
 var deaths = 0;
-var point = [0,0,0];
+var point = [0,0,0,0,0];
 var alerting = 0;
 var bouncing = 10;
 var mode = "classique";
-var modes = ["classique","rebond","tempetes"];
+var modes = ["classique","rebond","tempetes","poursuite"];
 var timeoutID;
 var multiplier = 1;
 var proba = 7;
@@ -54,7 +54,7 @@ function monopole(){
 }
 
 function reInit(n = 0){
-    point = [W/2,H/2,0];
+    point = [W/2,H/2,0,0,0];
     persos = [];
     for (var i = 0;i < 4;i ++){
         persos.push({"x":W/2+(i-2)*70,"y":H-25,"vx":0,"vy":0,"air":60,"j":0,"r":0,"dead":0,"fade":1});
@@ -80,6 +80,11 @@ function initMode(){
         bouncing = 15;
         multiplier = 3;
         proba = 14;
+    }
+    else if (mode == "poursuite"){
+        bouncing = 10;
+        multiplier = 1;
+        proba = 7;
     }
     alertMode("mode " + mode);
     timeoutID = window.setTimeout(disalertMode, 2000);
@@ -211,6 +216,16 @@ function draw() {
     }
     point[2] += 1;
     if (point[2] == 101) point[2] = 0;
+    if (mode == "poursuite"){
+        point[0] += point[3]/10;
+        point[1] += point[4]/10;
+        point[3] += rnd(3)-1;
+        point[4] += rnd(3)-1;
+        if (point[0] > W) point[0] = W;
+        else if (point[0] < 0) point[0] = 0;
+        if (point[1] > H) point[1] = H;
+        else if (point[1] < 0) point[1] = 0;
+    }
     persos.forEach(
         function(e,i){
             if (e.fade >= 0) ctx.globalAlpha = e.fade;
