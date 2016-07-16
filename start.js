@@ -10,11 +10,12 @@ imgPersos.forEach(
     }
 );
 var controls = [87,32,38,96];
-var courants = [1,-2,0,-1];
+var courants = [0,0,0,0];
 var bulles = [];
 var t2 = 0;
 var deaths = 0;
 var point = [0,0,0];
+var alerting = 0;
 
 // programme
 
@@ -39,11 +40,20 @@ function monopole(){
     courants.forEach(
         function(e,i){
             if (e > 0) nn += 1;
-            else if (e < 0) nn -= 1;            
+            else if (e < 0) nn -= 1;
         }
     );
     if (nn == -4 || nn == 4) return 1;
     else return 666;
+}
+
+function reInit(){
+    point = [W/2,H/2,0];
+    persos = [];
+    for (var i = 0;i < 4;i ++){
+        persos.push({"x":W/2+(i-2)*70,"y":H-25,"vx":0,"vy":0,"air":60,"j":0,"r":0,"dead":0,"fade":1});
+    }
+    var courants = [0,0,0,0];
 }
 
 function start(){
@@ -52,10 +62,8 @@ function start(){
     W = canvas.width;
     H = canvas.height;
     resize();
-    for (var i = 0;i < 4;i ++){
-        persos.push({"x":W/2+(i-2)*70,"y":H/2,"vx":0,"vy":0,"air":60,"j":0,"r":1,"dead":0,"fade":1});
-    }
-    for (var i = 0;i < 100;i ++){
+    reInit();
+    for (var i = 0;i < 80;i ++){
         bulles.push({"x":rnd(W),"y":rnd(H),"vx":0,"s":rnd(8)+4,"d":rndSpecial(),"n":0,"vy":0});
     }
     //    Widget = require("wdg");
@@ -70,11 +78,13 @@ function start(){
     document.addEventListener(
         "keyup",
         function (event){
+            if (alerting == 1) disalert();
             event.preventDefault();
             event.stopPropagation();
             keys[event.keyCode] = 0;
         }
     );
+    alert("Coincés au fond de l'océan, vous allez vous noyer. Sauf si vous parvenez à survivre en récupérant les points d'air blanc. Celui qui survivra le plus longtemps aura la victoire.");
     animation();
 }
 
@@ -87,54 +97,56 @@ function animation(){
 }
 
 function paint(t){
-    persos.forEach(
-        function(e,i){
-            if (e.dead == 0){
-                e.air -= (t-t2)/1000;
-                if (e.air < 0) dead(i);
-                if (e.j == 0){
-                    if (keys[controls[i]] == 1) {
-                        e.vy = -20;
-                        e.j = 1;
+    if (alerting == 0){
+        persos.forEach(
+            function(e,i){
+                if (e.dead == 0){
+                    e.air -= (t-t2)/1000;
+                    if (e.air < 0) dead(i);
+                    if (e.j == 0){
+                        if (keys[controls[i]] == 1) {
+                            e.vy = -20;
+                            e.j = 1;
+                        }
                     }
-                }
-                else {
-                    if (keys[controls[i]] == 0) e.j = 0;
-                }
-                if (e.vy < 10) e.vy += 1;
-                if (e.vx > courants[Math.round(e.y/H*3)]*2) e.vx -= 1;
-                else if (e.vx < courants[Math.round(e.y/H*3)]*2) e.vx += 1;
-                e.r += e.vx/125;
-                e.x += e.vx/5;
-                e.y += e.vy/5;
-                if (e.y + 25 > H) e.y = H - 25;
-                else if (e.y - 25 < 0) {e.y = 25;e.vy = 1;}
-                if (e.x + 25 > W) e.x = W - 25;
-                else if (e.x - 25 < 0) e.x = 25;
-                persos.forEach(
-                    function(f,j){
-                        if (i != j && f.dead == 0){
-                            if (Math.hypot(e.x-f.x,e.y-f.y) < 50){
-                                if (e.x > f.x) e.vx = 10;
-                                else if (e.x < f.x) e.vx = -10;
-                                if (e.y > f.y) e.vy = 10;
-                                else if (e.y < f.y) e.vy = -10;
+                    else {
+                        if (keys[controls[i]] == 0) e.j = 0;
+                    }
+                    if (e.vy < 10) e.vy += 1;
+                    if (e.vx > courants[Math.round(e.y/H*3)]*2) e.vx -= 1;
+                    else if (e.vx < courants[Math.round(e.y/H*3)]*2) e.vx += 1;
+                    e.r += e.vx/125;
+                    e.x += e.vx/5;
+                    e.y += e.vy/5;
+                    if (e.y + 25 > H) e.y = H - 25;
+                    else if (e.y - 25 < 0) {e.y = 25;e.vy = 1;}
+                    if (e.x + 25 > W) e.x = W - 25;
+                    else if (e.x - 25 < 0) e.x = 25;
+                    persos.forEach(
+                        function(f,j){
+                            if (i != j && f.dead == 0){
+                                if (Math.hypot(e.x-f.x,e.y-f.y) < 50){
+                                    if (e.x > f.x) e.vx = 10;
+                                    else if (e.x < f.x) e.vx = -10;
+                                    if (e.y > f.y) e.vy = 10;
+                                    else if (e.y < f.y) e.vy = -10;
+                                }
                             }
-                        } 
+                        }
+                    );
+                    if (Math.hypot(e.x-point[0],e.y-point[1]) < 75){
+                        e.air += 10;
+                        point[0] = rnd(W/2) + W/4;
+                        point[1] = rnd(H);
                     }
-                );
-                if (Math.hypot(e.x-point[0],e.y-point[1]) < 75){
-                    e.air += 10;
-                    point[0] = rnd(W);
-                    point[1] = rnd(H);
+                }
+                else{
+                    if (e.fade > 0.01) e.fade -= 0.01;
+                    else e.fade = 0;
                 }
             }
-            else{
-                if (e.fade > 0.01) e.fade -= 0.01;
-                else e.fade = 0;
-            }
-        }
-    );
+        );
+    }
     if (rnd(50) < 7) {
         var h = rnd(4);
         var hh = rnd(3)-1;
@@ -155,7 +167,7 @@ function draw() {
         ctx.fill();
     }
     point[2] += 1;
-    if (point[2] == 101) point[2] = 0; 
+    if (point[2] == 101) point[2] = 0;
     persos.forEach(
         function(e,i){
             ctx.globalAlpha = e.fade;
@@ -164,6 +176,18 @@ function draw() {
             ctx.rotate(e.r);
             ctx.drawImage(imgPersos[i],-25,-25);
             ctx.restore();
+            if (e.air > 60) var cercle = Math.PI/2*3;
+            else var cercle = ((60-e.air)/60*Math.PI*2)-Math.PI/2;
+            ctx.strokeStyle = "rgb(200,200,250)";
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.arc(e.x + 25,e.y-25,3,-Math.PI/2,cercle,true);
+            ctx.stroke();
+            ctx.strokeStyle = "rgb(0,0,0)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(e.x + 25,e.y-25,6,-Math.PI,Math.PI,true);
+            ctx.stroke();
         }
     );
     ctx.globalAlpha = 1;
