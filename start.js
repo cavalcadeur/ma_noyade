@@ -18,10 +18,11 @@ var point = [0,0,0,0,0];
 var alerting = 0;
 var bouncing = 10;
 var mode = "classique";
-var modes = ["classique","rebond","tempetes","poursuite","meli-melo","aveugle","apesanteur"];
+var modes = ["classique","rebond","tempetes","poursuite","meli-melo","aveugle","apesanteur","gravite inverse"];
 var timeoutID;
 var multiplier = 1;
 var proba = 7;
+var gravite;
 
 // programme
 
@@ -70,36 +71,49 @@ function initMode(){
         bouncing = 10;
         multiplier = 1;
         proba = 7;
+        gravite = 1;
     }
     else if (mode == "rebond"){
         bouncing = 100;
         multiplier = 1;
         proba = 7;
+        gravite = 1;
     }
     else if (mode == "tempetes"){
         bouncing = 15;
         multiplier = 3;
         proba = 14;
+        gravite = 1;
     }
     else if (mode == "poursuite"){
         bouncing = 10;
         multiplier = 1;
         proba = 7;
+        gravite = 1;
     }
     else if (mode == "aveugle"){
         bouncing = 10;
         multiplier = 1;
         proba = 7;
+        gravite = 1;
     }
     else if (mode == "apesanteur"){
         bouncing = 40;
         multiplier = 1;
         proba = 7;
+        gravite = 1;
     }
     else if (mode == "meli-melo"){
         bouncing = 100;
         multiplier = 3;
         proba = 14;
+        gravite = -1;
+    }
+    else if (mode == "gravite inverse"){
+        bouncing = 10;
+        multiplier = 1;
+        proba = 7;
+        gravite = -1;
     }
     alertMode("mode " + mode);
     timeoutID = window.setTimeout(disalertMode, 2000);
@@ -158,7 +172,7 @@ function paint(t){
                                 e.vx = Math.cos(e.r-Math.PI/2) * 50;
                                 e.vy = Math.sin(e.r-Math.PI/2) * 50;
                             }
-                            else e.vy = -20;
+                            else e.vy = -20*gravite;
                             e.j = 1;
                         }
                     }
@@ -169,13 +183,18 @@ function paint(t){
                         if (e.vy > 0) e.vy -= 1;
                         else if (e.vy < 0) e.vy += 1;
                     }
-                    else if (e.vy < 10) e.vy += 1;
+                    else if (gravite > 0) {
+                        if (e.vy < 10) e.vy += 1*gravite;
+                    }
+                    else {
+                        if (e.vy > -10) e.vy += 1*gravite;
+                    }
                     if (e.vx > courants[Math.round(e.y/H*3)]*2) e.vx -= 1;
                     else if (e.vx < courants[Math.round(e.y/H*3)]*2) e.vx += 1;
                     e.r += e.vx/125;
                     e.x += e.vx/5;
                     e.y += e.vy/5;
-                    if (e.y + 25 > H) e.y = H - 25;
+                    if (e.y + 25 > H) {e.y = H - 25;e.vy = -1;}
                     else if (e.y - 25 < 0) {e.y = 25;e.vy = 1;}
                     if (e.x + 25 > W) e.x = W - 25;
                     else if (e.x - 25 < 0) e.x = 25;
