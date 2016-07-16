@@ -16,6 +16,10 @@ var t2 = 0;
 var deaths = 0;
 var point = [0,0,0];
 var alerting = 0;
+var bouncing = 10;
+var mode = "classique";
+var modes = ["classique","rebond"];
+var timeoutID;
 
 // programme
 
@@ -47,7 +51,7 @@ function monopole(){
     else return 666;
 }
 
-function reInit(){
+function reInit(n = 0){
     point = [W/2,H/2,0];
     persos = [];
     for (var i = 0;i < 4;i ++){
@@ -55,6 +59,19 @@ function reInit(){
     }
     courants = [0,0,0,0];
     deaths = 0;
+    mode = modes[rnd(modes.length)];
+    if (n == 0) initMode();
+}
+
+function initMode(){
+    if (mode == "classique"){
+        bouncing = 10;
+    }
+    else if (mode == "rebond"){
+        bouncing = 100;
+    }
+    alertMode("mode " + mode);
+    timeoutID = window.setTimeout(disalertMode, 2000);
 }
 
 function start(){
@@ -63,7 +80,7 @@ function start(){
     W = canvas.width;
     H = canvas.height;
     resize();
-    reInit();
+    reInit(1);
     for (var i = 0;i < 50;i ++){
         bulles.push({"x":rnd(W),"y":rnd(H),"vx":0,"s":rnd(8)+4,"d":rndSpecial(),"n":0,"vy":0});
     }
@@ -85,7 +102,7 @@ function start(){
             keys[event.keyCode] = 0;
         }
     );
-    alert("Coincés au fond de l'océan, vous allez vous noyer. Sauf si vous parvenez à survivre en récupérant les points d'air blanc. Celui qui survivra le plus longtemps aura la victoire.");
+    alert("Coincés au fond de l'océan, vous allez vous noyer. Sauf si vous parvenez à survivre en récupérant les points d'air blanc. Celui qui survivra le plus longtemps aura la victoire. j1 : w  j2 : espace  j3 : fleche du haut  j4 : 0");
     animation();
 }
 
@@ -127,10 +144,10 @@ function paint(t){
                         function(f,j){
                             if (i != j && f.dead == 0){
                                 if (Math.hypot(e.x-f.x,e.y-f.y) < 50){
-                                    if (e.x > f.x) e.vx = 10;
-                                    else if (e.x < f.x) e.vx = -10;
-                                    if (e.y > f.y) e.vy = 10;
-                                    else if (e.y < f.y) e.vy = -10;
+                                    if (e.x > f.x) e.vx = bouncing;
+                                    else if (e.x < f.x) e.vx = -bouncing;
+                                    if (e.y > f.y) e.vy = bouncing;
+                                    else if (e.y < f.y) e.vy = -bouncing;
                                 }
                             }
                         }

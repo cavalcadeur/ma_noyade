@@ -30,6 +30,29 @@ body {
     transition: 0.5s transform;
 }
 
+#mode {
+    position: absolute;
+    left: 0%;
+    top: 5%;
+    right: 0%;
+    bottom: 0%;
+    text-align: center;
+    transition: opacity 5s;
+    background-color: rgba(0,0,0,0);
+	opacity:0;
+	color: rgb(255,255,255);	
+    font-weight: normal;
+    font-size: 500%;
+	font-style: oblique;
+    padding: 5px;
+    z-index: 2;
+}
+
+#mode.show {
+	opacity:1;	
+    transition: opacity 5s;
+}
+
 canvas {
 	position: absolute;
 	left: 0;

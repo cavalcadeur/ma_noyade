@@ -14,3 +14,14 @@ window.disalert = function(n) {
     elem.className = ' ';
 };
 
+window.alertMode = function(msg,n) {
+    var elem = document.getElementById("mode");
+    elem.textContent = msg;
+    elem.className = 'show';
+};
+
+window.disalertMode = function(n) {
+    var elem = document.getElementById("mode");
+    elem.className = ' ';
+};
+
