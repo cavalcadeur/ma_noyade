@@ -210,8 +210,10 @@ function draw() {
 }
 
 function drawFond(){
-    ctx.fillStyle = "rgb(10,10,90)";
-    ctx.fillRect(0,0,W,H);
+    for (var i = 0;i < 10;i++){
+        ctx.fillStyle = "rgb(" + (15 - i) + "," + (15 - i) + "," + (95 - i*2) + ")";
+        ctx.fillRect(0,i*(H/10),W,H/10);
+    }
     ctx.strokeStyle = "rgb(200,200,250)";
     ctx.fillStyle = "rgb(50,50,100)";
     ctx.globalAlpha = 0.1;
