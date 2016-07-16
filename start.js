@@ -18,8 +18,10 @@ var point = [0,0,0];
 var alerting = 0;
 var bouncing = 10;
 var mode = "classique";
-var modes = ["classique","rebond"];
+var modes = ["classique","rebond","tempetes"];
 var timeoutID;
+var multiplier = 1;
+var proba = 7;
 
 // programme
 
@@ -66,9 +68,18 @@ function reInit(n = 0){
 function initMode(){
     if (mode == "classique"){
         bouncing = 10;
+        multiplier = 1;
+        proba = 7;
     }
     else if (mode == "rebond"){
         bouncing = 100;
+        multiplier = 1;
+        proba = 7;
+    }
+    else if (mode == "tempetes"){
+        bouncing = 15;
+        multiplier = 3;
+        proba = 14;
     }
     alertMode("mode " + mode);
     timeoutID = window.setTimeout(disalertMode, 2000);
@@ -179,9 +190,9 @@ function paint(t){
             }
         );
     }
-    if (rnd(50) < 7) {
+    if (rnd(50) < proba) {
         var h = rnd(4);
-        var hh = rnd(3)-1;
+        var hh = (rnd(3)-1)*multiplier;
         courants[h] += hh;
         if (monopole() == 1) courants[h] -= hh*2;
     }
