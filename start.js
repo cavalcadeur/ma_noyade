@@ -155,8 +155,8 @@ function paint(t){
                     if (e.j == 0){
                         if (keys[controls[i]] == 1) {
                             if (mode == "apesanteur"){
-                                e.vx = Math.cos(e.r-Math.PI/2) * 20;
-                                e.vy = Math.sin(e.r-Math.PI/2) * 20;
+                                e.vx = Math.cos(e.r-Math.PI/2) * 50;
+                                e.vy = Math.sin(e.r-Math.PI/2) * 50;
                             }
                             else e.vy = -20;
                             e.j = 1;
