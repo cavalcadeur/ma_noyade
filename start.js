@@ -18,7 +18,7 @@ var point = [0,0,0,0,0];
 var alerting = 0;
 var bouncing = 10;
 var mode = "classique";
-var modes = ["classique","rebond","tempetes","poursuite"];
+var modes = ["classique","rebond","tempetes","poursuite","meli-melo"];
 var timeoutID;
 var multiplier = 1;
 var proba = 7;
@@ -85,6 +85,11 @@ function initMode(){
         bouncing = 10;
         multiplier = 1;
         proba = 7;
+    }
+    else if (mode == "meli-melo"){
+        bouncing = 100;
+        multiplier = 3;
+        proba = 14;
     }
     alertMode("mode " + mode);
     timeoutID = window.setTimeout(disalertMode, 2000);
@@ -172,6 +177,8 @@ function paint(t){
                         e.air += 10;
                         point[0] = rnd(W/2) + W/4;
                         point[1] = rnd(H);
+                        point[3] = 0;
+                        point[4] = 0;
                     }
                 }
                 else{
@@ -216,7 +223,7 @@ function draw() {
     }
     point[2] += 1;
     if (point[2] == 101) point[2] = 0;
-    if (mode == "poursuite"){
+    if (mode == "poursuite" || mode == "meli-melo"){
         point[0] += point[3]/10;
         point[1] += point[4]/10;
         point[3] += rnd(3)-1;
