@@ -53,7 +53,8 @@ function reInit(){
     for (var i = 0;i < 4;i ++){
         persos.push({"x":W/2+(i-2)*70,"y":H-25,"vx":0,"vy":0,"air":60,"j":0,"r":0,"dead":0,"fade":1});
     }
-    var courants = [0,0,0,0];
+    courants = [0,0,0,0];
+    deaths = 0;
 }
 
 function start(){
@@ -141,8 +142,21 @@ function paint(t){
                     }
                 }
                 else{
-                    if (e.fade > 0.01) e.fade -= 0.01;
-                    else e.fade = 0;
+                    if (e.fade > 0) e.fade -= 0.01;
+                    else if (e.fade <= 0 && e.fade > -5) {
+                        deaths += 1;
+                        var gagnant;
+                        var victoire = ["jaune","bleu","rouge","vert"];
+                        if (deaths == 3) {
+                            persos.forEach(
+                                function(e,i){
+                                    if (e.dead == 0) gagnant = victoire[i];
+                                }
+                            );
+                            alert("Fin du jeu mes amis ! C'est le " + gagnant + " qui a gagné !!!!!!!!!!!!!");
+                        }
+                        e.fade = -10;
+                    }
                 }
             }
         );
@@ -170,13 +184,15 @@ function draw() {
     if (point[2] == 101) point[2] = 0;
     persos.forEach(
         function(e,i){
-            ctx.globalAlpha = e.fade;
+            if (e.fade >= 0) ctx.globalAlpha = e.fade;
+            else ctx.globalAlpha = 0;
             ctx.save();
             ctx.translate(e.x,e.y);
             ctx.rotate(e.r);
             ctx.drawImage(imgPersos[i],-25,-25);
             ctx.restore();
             if (e.air > 60) var cercle = Math.PI/2*3;
+            else if(e.air <= 0) var cercle = -Math.PI/2;
             else var cercle = ((60-e.air)/60*Math.PI*2)-Math.PI/2;
             ctx.strokeStyle = "rgb(200,200,250)";
             ctx.lineWidth = 6;
@@ -217,16 +233,5 @@ function drawFond(){
 }
 
 function dead(n){
-    var victoire = ["jaune","bleu","rouge","vert"];
-    var gagnant;
     persos[n].dead = 1;
-    deaths += 1;
-    if (deaths == 3) {
-        persos.forEach(
-            function(e,i){
-                if (e.dead == 0) gagnant = victoire[i];
-            }
-        );
-        alert("Fin du jeu mes amis ! C'est le " + gagnant + " qui a gagné !!!!!!!!!!!!!");
-    }
 }
